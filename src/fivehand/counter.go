@@ -11,8 +11,8 @@ func (c *Counter) Start(hand1, hand2 string) int {
 	//统计每张牌的出现的次数
 	faceCount1, faceCount2 := GetFaceCount(hand1), GetFaceCount(hand2)
 
-	rank1, newHand1 := c.getSevenHandRank(hand1, faceCount1)
-	rank2, newHand2 := c.getSevenHandRank(hand2, faceCount2)
+	rank1, newHand1 := c.getFiveHandRank(hand1, faceCount1)
+	rank2, newHand2 := c.getFiveHandRank(hand2, faceCount2)
 
 	if rank1 > rank2 {
 		return 1
@@ -52,8 +52,8 @@ func (c *Counter) Start(hand1, hand2 string) int {
 	}
 }
 
-//getSevenHandRank 得到牌型
-func (c *Counter) getSevenHandRank(hand string, faceCount FaceCount) (int, string) {
+//getFiveHandRank 得到牌型
+func (c *Counter) getFiveHandRank(hand string, faceCount FaceCount) (int, string) {
 	code := GetFaceCountCode(faceCount)
 	rank := FiveHandCount[code]
 	newHand := ""

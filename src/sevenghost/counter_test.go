@@ -31,7 +31,7 @@ func TestSevenHand_Spend_Time(t *testing.T) {
 
 func TestSevenHand_Result(t *testing.T) {
 	var matches Matches
-	file, err := ioutil.ReadFile("../../input/seven_cards_with_ghost.result.json")
+	file, err := ioutil.ReadFile("../../input/seven_cards_with_ghost.json")
 	if err != nil {
 		fmt.Println(err)
 	}

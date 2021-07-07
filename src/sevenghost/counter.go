@@ -23,7 +23,7 @@ func (c *Counter) Start(hand1, hand2 string) int {
 		switch rank1 {
 
 		case HandRank["单张大牌"]:
-			return c.equalJudgeHighCard(faceCount1, faceCount2)
+			return c.equalJudgeSingleCard(faceCount1, faceCount2)
 
 		case HandRank["同花"]:
 			//  同花总是挑出来的
@@ -132,7 +132,7 @@ func (c *Counter) getGhostHandRank(hand string, faceCount FaceCount) (int, strin
 		var straight string
 		//  判断是否是同花
 		if flush, maybe := c.maybeIsFlush(hand, true); maybe {
-			if straight, maybe = c.maybeIsStraightByNoDuplicate(flush, true); maybe {
+			if straight, maybe = c.maybeIsStraightByNoRepeat(flush, true); maybe {
 				if c.isRoyalFlush(straight) {
 					rank = HandRank["皇家同花顺"]
 				} else {
@@ -167,7 +167,7 @@ func (c *Counter) getSevenHandRank(hand string, faceCount FaceCount) (int, strin
 		//  同花的点数大于顺子，所以优先判断是不是同花
 		if flush, maybe := c.maybeIsFlush(hand, false); maybe {
 			//  如果是则判断是不是顺子
-			if straight, maybe = c.isStraightByNoDuplicate(flush, true); maybe {
+			if straight, maybe = c.isStraightByNoRepeat(flush, true); maybe {
 				if c.isRoyalFlush(straight) {
 					rank = HandRank["皇家同花顺"]
 				} else {
@@ -227,7 +227,7 @@ func (c *Counter) maybeIsFlush(hand string, isGhost bool) (string, bool) {
 }
 
 //  判断无重复字符串是否是顺子
-func (c *Counter) isStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
+func (c *Counter) isStraightByNoRepeat(hand string, needSort bool) (string, bool) {
 	if needSort {
 		hand = Sort(hand)
 	}
@@ -272,11 +272,11 @@ func (c *Counter) isStraightByCount(count FaceCount) (string, bool) {
 		return "", false
 	}
 
-	return c.isStraightByNoDuplicate(hand, false)
+	return c.isStraightByNoRepeat(hand, false)
 }
 
-//  maybeIsStraight 判断有鬼牌的手牌是不是顺子，是顺子时返回最大顺子手牌，没顺子时返回排序后的hand
-func (c *Counter) maybeIsStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
+//  maybeIsStraight 判断有鬼牌的手牌是不是顺子，是顺子时返回最大顺子手牌，没顺子时返回排序后的hand,NoRepeat无重复
+func (c *Counter) maybeIsStraightByNoRepeat(hand string, needSort bool) (string, bool) {
 	if needSort {
 		hand = Sort(hand)
 	}
@@ -360,10 +360,10 @@ func (c *Counter) maybeIsStraightByFaceCount(count FaceCount) (string, bool) {
 	if Sa.Len() < 4 {
 		return "", false
 	}
-	return c.maybeIsStraightByNoDuplicate(Sa.String(), false)
+	return c.maybeIsStraightByNoRepeat(Sa.String(), false)
 }
 
-func (c *Counter) equalJudgeHighCard(count1, count2 FaceCount) int {
+func (c *Counter) equalJudgeSingleCard(count1, count2 FaceCount) int {
 	m1, m2 := c.getFaceCountMap(count1)[1], c.getFaceCountMap(count2)[1]
 
 	rst := 0

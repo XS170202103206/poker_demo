@@ -1,7 +1,6 @@
 package src
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -91,23 +90,23 @@ var SevenHandCountCode = map[string]int {
 	"1020": HandRank["葫芦"],
 	"2110": HandRank["葫芦"],
 	"0210": HandRank["葫芦"],
-	//"1300": HandRank["两对"],
-	//  非确定，都可能为同花、顺子。当以上条件不满足时Map值为最大值
-	"4010": HandRank["三条"], //  AAABCDE
-	"1300": HandRank["两对"], //  AABBCCD
-	"3200": HandRank["两对"], //  AABBCDE
-	"5100": HandRank["一对"], //  AABCDEF
-	"7000": HandRank["单张大牌"], //  ABCDEFG
+	"1300": HandRank["两对"],
+	//  非确定
+	"4010": HandRank["三条"], //  AAABCDE 可能是同花6 或 顺子5
+	"3200": HandRank["两对"], //  AABBCDE 可能是同花或顺子
+	"5100": HandRank["一对"], //  AABCDEF 可能是同花或顺子
+	"7000": HandRank["单张大牌"], //  ABCDEFG 可能是同花或顺子
 }
 
-var GhostHandCountCode = map[string]int {
+var GhostHandCountCode = map[string]int { // X+6;无两对牌型
 	"0101": HandRank["四条"],
 	"2001": HandRank["四条"],
 	"0020": HandRank["四条"],
 	"1110": HandRank["四条"],
+
 	"0300": HandRank["葫芦"],
 	//  非确定
-	"3010": HandRank["四条"], //可能为同花顺、皇家同花顺
+	"3010": HandRank["四条"], //可能为同花顺9、皇家同花顺10 同花5的等级太低了，不需要考虑
 	"2200": HandRank["葫芦"], //可能为同花顺、皇家同花顺
 	"4100": HandRank["三条"], //可能为顺子、同花、同花顺、皇家同花顺
 	"6000": HandRank["一对"], //可能为顺子、同花、同花顺、皇家同花顺
@@ -144,7 +143,6 @@ func GetFaceCount(hand string) FaceCount {
 	for i := 0; i < len(hand); i += 2 {
 		count[FaceRank[hand[i:i+1]]]++
 	}
-	fmt.Println(count)
 	return count
 }
 
@@ -181,10 +179,10 @@ func GetFaceCountCode(count FaceCount) string {
 //GetFaceCountMap 返回一个map，该map的key为出现的次数，v是一个[]int，存储了牌面值
 func GetFaceCountMap(count FaceCount) map[int][]int {
 	countMap := make(map[int][]int, 5) //countMap 等于 键值int 对应 []int{1,2,3} int数组
-	countMap[1] = make([]int, 7, 7)
-	countMap[2] = make([]int, 3, 3)
-	countMap[3] = make([]int, 2, 2)
-	countMap[4] = make([]int, 1, 1)
+	countMap[1] = make([]int, 0, 7)
+	countMap[2] = make([]int, 0, 3)
+	countMap[3] = make([]int, 0, 2)
+	countMap[4] = make([]int, 0, 1)
 	//  此处i为牌点数，v是牌面出现的次数，i从14开始，不记录鬼牌
 	var i, v int
 	for i = 14; i >= 2; i-- {
@@ -195,12 +193,13 @@ func GetFaceCountMap(count FaceCount) map[int][]int {
 			countMap[v] = append(countMap[v], i)
 		}
 	}
-	fmt.Println("GetFaceCountMap的map：",countMap)
 	return countMap
 }
 
 // IsRoyalFlush isRoyalFlush 在保证同花的前提下判断是否可能为皇家同花顺
 func IsRoyalFlush(hand string) bool {
 	return strings.Contains(hand, "AKQJT")
+	//return strings.Compare(hand, "AKQJT") == 0
 }
+
 
